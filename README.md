@@ -96,10 +96,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Data Retrieval and Validation** - Advanced techniques for critical data recovery
 - **Customized Training** - Specialized technical training in automotive forensics
 
-**Contact:** contact@fortifylabs.io  
-**Phone:** +61 (02) 6188 9889  
-**Location:** Australia
-
 ## Acknowledgments
 
 These tools were developed through research documented in our "Behind the Dashboard" blog series, analyzing data from Ford Ranger PX3 and SYNC 3 systems to understand privacy implications and data retention in modern connected vehicles.
