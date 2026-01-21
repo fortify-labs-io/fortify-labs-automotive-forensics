@@ -59,18 +59,18 @@ python visualization/kml_generator.py --input gps_data.csv --output vehicle_trip
 ## Documentation
 
 For methodology and research context, see our blog series:
-- [Behind the Dashboard: Part 2 - Data Analysis](https://www.fortifylabs.io/information/connected%20vehicles/vehicles/privacy/ford%20ranger/data%20analysis/2026/01/11/privacy-demonstration-ford-ranger-px3-data-analysis.html)
-- [Behind the Dashboard: Part 3A - Bluetooth Data](https://www.fortifylabs.io/technical/connected%20vehicles/vehicles/privacy/ford%20ranger/data%20analysis/forensics/2026/01/19/privacy-demonstration-ford-ranger-px3-data-deep-dive_A-BT.html)
+- [Behind the Dashboard blog series](https://www.fortifylabs.io/blog/)
 
 ## Repository Structure
 
 ```
 automotive-forensics-toolkit/
-├── ford-sync/              # Ford SYNC-specific analysis tools
-│   ├── 
-│   └── README.md
+├── ford-sync/                              # Ford SYNC-specific analysis tools
+│   ├── parse_unifiedsearch_log.py          # GPS extraction and clustering tool
+│   ├── parse_unifiedsearch_log_README.md   # Detailed tool documentation
+│   └── README.md                           # Ford SYNC tools overview
 ├── LICENSE
-└── README.md
+└── README.md                               # Main repository README
 ```
 
 ## Privacy & Ethics
