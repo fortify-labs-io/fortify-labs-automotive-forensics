@@ -53,3 +53,9 @@ The script automatically filters:
 Edit these values in `main()` to adjust behavior:
 - `time_gap_minutes = 2` - Minutes between trips
 - `min_points_per_trip = 3` - Minimum points per trip
+
+## Author
+Created for automotive cybersecurity research and forensic analysis at Fortify Labs.
+
+## License
+This tool is provided for legitimate automotive security research and forensic analysis purposes.
