@@ -2,25 +2,6 @@
 
 Analysis tools for Ford SYNC 3 infotainment systems developed through automotive cybersecurity research at Fortify Labs.
 
-## Available Tools
-
-### parse_unifiedsearch_log.py
-GPS location analysis tool that extracts and clusters GPS coordinates from Ford SYNC unified search logs.
-
-**Features:**
-- Parses Ford SYNC unified search log files (System:QNX format)
-- Extracts GPS coordinates from reverse geocoding entries
-- Clusters locations within 100-meter radius using Haversine distance
-- Identifies most frequently visited locations
-- Generates analysis reports with timestamps and statistics
-
-**Quick Start:**
-```bash
-python parse_unifiedsearch_log.py unifiedsearch.log
-```
-
-See detailed documentation in [parse_unifiedsearch_log_README.md](parse_unifiedsearch_log_README.md)
-
 ## Supported Systems
 
 - Ford SYNC 3 (QNX-based)
