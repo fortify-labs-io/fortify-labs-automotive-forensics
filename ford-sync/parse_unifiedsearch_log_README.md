@@ -1,18 +1,18 @@
-# Ford SYNC Unified Search Log GPS Analysis Tool
+# Ford SYNC PAS Debug Log GPS Track Parser
 
 ## Overview
-This Python script analyzes Ford SYNC 3 unified search log files to extract and analyze GPS coordinates from reverse geocoding (rgc) entries. It identifies the most frequently visited locations by clustering GPS points within a 100-meter radius.
+This Python script extracts GPS tracks from Ford SYNC 3 `pas_debug.log` files and creates time-enabled KML files for Google Earth visualization. It parses map-matched GPS coordinates (snapped to roads) from the SendGPSCanData entries and groups them into individual trips for forensic analysis.
 
 ## Features
-- ✅ Parses Ford SYNC unified search log files (System:QNX format)
-- ✅ Extracts GPS coordinates from `rgc=&current_location=` entries
-- ✅ Filters data by year (focuses on 2025 entries)
-- ✅ Clusters locations within 100-meter radius using Haversine distance calculation
-- ✅ Calculates centroid (center point) for each cluster
-- ✅ Identifies top 3 most common locations
-- ✅ Generates formatted analysis report with statistics
-- ✅ Exports all GPS points with timestamps to separate log file
-- ✅ Includes Google Maps links for each location
+- ✅ Parses Ford SYNC `pas_debug.log*` files for GPS coordinates
+- ✅ Extracts MM Output (Map Matched coordinates - snapped to roads)
+- ✅ Filters invalid GPS fixes (0.0,0.0 and out-of-range coordinates)
+- ✅ Groups coordinates into trips based on time gaps
+- ✅ Calculates trip statistics (distance, duration, average speed)
+- ✅ Creates time-enabled KML files for Google Earth playback
+- ✅ Supports multiple log file formats (natural sorting)
+- ✅ Includes start/end markers with trip metadata
+- ✅ Uses Haversine formula for accurate distance calculations
 
 ## Requirements
 - Python 3.6 or higher
@@ -22,191 +22,148 @@ This Python script analyzes Ford SYNC 3 unified search log files to extract and 
 
 ### Basic Usage
 ```bash
-python parse_unifiedsearch_log.py <log_file_path>
+python3 parse_gps_tracks.py
 ```
 
-### Example
-```bash
-python parse_unifiedsearch_log.py unifiedsearch.log
-```
+### What It Does
+The script will automatically:
+1. Search the current directory for `pas_debug.log*` files
+2. Parse GPS coordinates from SendGPSCanData entries
+3. Extract and validate map-matched coordinates
+4. Filter out invalid GPS fixes
+5. Group points into trips (2+ minute gaps = new trip)
+6. Calculate trip statistics (distance, duration, speed)
+7. Create time-enabled KML files in `gps-tracks_pas-debug/` folder
 
 ## Input Format
-The script expects Ford SYNC unified search log files with entries in this format:
+The script expects Ford SYNC PAS debug log files with entries containing:
 
 ```
-System:QNX
-2025-01-15 08:23:45 | 62 | start initializing unified onebox engine
-searchResourcePath=[/fs/sd/MAP/MAP_ANZ/index/], isSearchResourceAvailable=[true]
-rgc=&current_location=-34.928500,138.600700&lang=en-GB&Priority=17
+11/15/2025 14:23:45.123 SendGPSCanData ... MM Output: Lon:xxxxxxxxxx Lat:-xxxxxxxxx Alt:45.5 Hd:180.0 ... SatInView:12
 ```
 
 Key requirements:
-- Each entry starts with "System:QNX"
-- Timestamps in format: `YYYY-MM-DD HH:MM:SS`
-- GPS coordinates in format: `rgc=&current_location=LAT,LON&lang=...`
+- Timestamps in format: `MM/DD/YYYY HH:MM:SS.mmm`
+- MM Output (Map Matched) coordinates in raw integer format
+- Longitude and Latitude fields with adaptive precision decoding
+- Altitude in meters, Heading in degrees
+- SatInView (satellites in view) count
 
 ## Output Files
 
-### 1. GPS_Location_Analysis_Report_2025.txt
-Formatted analysis report containing:
-- Summary statistics (total points, unique clusters)
-- Top 3 most common locations with:
-  - Formatted coordinates (degrees N/S, E/W)
-  - Cluster centroid coordinates
-  - Point count and percentage
-  - First and last visit timestamps
-  - Google Maps link
-- Combined statistics
-- Additional details (date range, clustering precision)
+### KML Files (in gps-tracks_pas-debug/ folder)
+Each trip generates a file named: `output_YYYY-MM-DD-HHMMSS.kml`
 
-### 2. AI-analysis_unifiedsearch-log.log
-Complete list of all GPS points from 2025 with:
-- Timestamp
-- Original GPS coordinates (latitude, longitude)
-- Simple pipe-delimited format for easy parsing
+The KML file includes:
+- **Start marker** (green) - Trip starting point
+- **End marker** (red) - Trip ending point
+- **Time-enabled GPS track** - Complete route with timestamps
+- **Trip metadata** - Distance, duration, avg speed, point count
+- **Playback controls** - Compatible with Google Earth time slider
 
 ## How It Works
 
-### 1. Log Parsing
-- Reads the unified search log file line by line
-- Identifies entry boundaries using "System:QNX" markers
-- Extracts timestamps using regex pattern matching
-- Extracts GPS coordinates from `rgc=` entries
+### 1. Log File Discovery
+- Searches for files matching: `pas_debug.log*`, `*pas_debug.log*`, `*pas_debug_log*`
+- Sorts files naturally (handles numbered suffixes correctly)
+- Reports file sizes and processes in order
 
-### 2. Year Filtering
-- Only processes entries with timestamps from 2025
-- Ignores all other years to focus analysis
+### 2. GPS Coordinate Extraction
+- Identifies lines containing `SendGPSCanData`
+- Extracts timestamp using regex pattern matching
+- Parses MM Output (Map Matched coordinates)
+- Decodes raw coordinate values with adaptive precision:
+  - Values > 1,000,000: divide by 100,000
+  - Values < 1,000,000: divide by 10,000
 
-### 3. Location Clustering
-- Uses Haversine formula to calculate great-circle distances between GPS points
-- Groups points within 100 meters of each other into clusters
-- Each point belongs to exactly one cluster
-- Clustering algorithm:
-  1. Takes first unassigned point as cluster seed
-  2. Finds all nearby points within radius
-  3. Marks them as assigned to this cluster
-  4. Repeats until all points are assigned
+### 3. Coordinate Validation
+The script filters out invalid GPS data:
+- Raw coordinates of 0.0, 0.0 (no GPS fix)
+- Decoded coordinates near 0.0, 0.0 (South Atlantic "null island")
+- Latitude outside range: -90° to 90°
+- Longitude outside range: -180° to 180°
 
-### 4. Centroid Calculation
-- Calculates the average (centroid) of all points in each cluster
-- Provides a representative "center point" for the location
-- More accurate than using any single GPS reading
+### 4. Trip Grouping
+- Sorts all GPS points chronologically
+- Groups points into trips based on time gaps
+- Default threshold: 2+ minutes = new trip
+- Maintains point order within each trip
 
-### 5. Statistics & Ranking
-- Sorts clusters by frequency (most common first)
-- Calculates percentages and visit date ranges
-- Identifies top 3 most frequently visited locations
-
-## Example Output
-
-```
-================================================================================
-GPS LOCATION ANALYSIS REPORT - 2025
-================================================================================
-Generated: 2025-01-21 05:17:05
-
-SUMMARY
---------------------------------------------------------------------------------
-Total GPS Points: 10
-Unique Locations (clustered): 3
-
-TOP 3 MOST COMMON LOCATIONS
---------------------------------------------------------------------------------
-
-LOCATION #1
-  Coordinates: 34.928520°S, 138.600720°E
-  Clustered around: [-34.928520, 138.600720]
-  Total Points: 5 (50.0% of all points)
-  First Visit: 2025-01-15 08:23:45
-  Last Visit: 2025-01-18 17:15:42
-  Google Maps: https://www.google.com/maps?q=-34.928520,138.600720
-
-LOCATION #2
-  Coordinates: 33.815200°S, 151.003517°E
-  Clustered around: [-33.815200, 151.003517]
-  Total Points: 3 (30.0% of all points)
-  First Visit: 2025-01-16 14:22:10
-  Last Visit: 2025-01-16 15:10:22
-  Google Maps: https://www.google.com/maps?q=-33.815200,151.003517
-
-LOCATION #3
-  Coordinates: 35.280850°S, 149.130250°E
-  Clustered around: [-35.280850, 149.130250]
-  Total Points: 2 (20.0% of all points)
-  First Visit: 2025-01-17 10:05:44
-  Last Visit: 2025-01-17 10:30:11
-  Google Maps: https://www.google.com/maps?q=-35.280850,149.130250
-
-COMBINED STATISTICS
---------------------------------------------------------------------------------
-Top 3 locations combined: 10 points (100.0%)
-Other locations: 0 points (0.0%)
-
-ADDITIONAL DETAILS
---------------------------------------------------------------------------------
-Date range: 2025-01-15 08:23:45 to 2025-01-18 17:15:42
-Clustering precision: ~100 meters
-
-================================================================================
-```
-
-## Technical Details
-
-### Haversine Distance Formula
-The script uses the Haversine formula to calculate distances between GPS coordinates:
-- Accounts for the Earth's curvature
+### 5. Distance Calculation
+Uses Haversine formula to calculate great-circle distances:
+- Accounts for Earth's curvature
 - Returns distance in meters
-- Accurate for small distances (~100m clusters)
+- Accurate for all trip lengths
 - Earth radius: 6,371,000 meters
 
-### Clustering Precision
-- Default radius: 100 meters
-- Can be modified in the code if needed
-- Balances between grouping nearby locations and distinguishing separate locations
-- Suitable for analyzing parking locations, home/work locations, etc.
+### 6. KML Generation
+Creates Google Earth-compatible files with:
+- `gx:Track` element for time-based playback
+- ISO 8601 timestamps for each point
+- Color-coded track (red line, customizable width)
+- Start/end placemarks with descriptions
+- Trip statistics in document metadata
 
-### Coordinate Formatting
-- Input: Decimal degrees (e.g., -34.928500, 138.600700)
-- Output: Degrees with direction (e.g., 34.928500°S, 138.600700°E)
-- Precision: 6 decimal places (~0.11 meters at equator)
+## Viewing in Google Earth
 
-## Privacy Considerations
-For your "Behind the Dashboard" blog series, remember to:
-- ✅ Redact actual GPS coordinates in screenshots
-- ✅ Use generic location names instead of exact addresses
-- ✅ Consider blurring or removing Google Maps links if publishing
-- ✅ The script output shows raw coordinates - sanitize before publishing
+### Desktop Application
+1. Open the KML file in Google Earth Pro or Google Earth
+2. Find the **time slider** at the top of the screen
+3. Click the **play button** to animate the route
+4. Adjust playback speed with the slider controls
+5. Use the **date/time range selectors** for specific segments
 
-## Files Included
-1. `parse_unifiedsearch_log.py` - Main analysis script
-2. `test_unifiedsearch.log` - Sample log file for testing
-3. `GPS_Location_Analysis_Report_2025.txt` - Example report output
-4. `AI-analysis_unifiedsearch-log.log` - Example points log output
-5. `README.md` - This file
+### Web Version
+1. Go to [earth.google.com](https://earth.google.com)
+2. Click **Projects** → **Import KML file from computer**
+3. Upload the KML file
+4. The route will display with time information
+
+## Configuration
+
+Edit these values in the `main()` function to adjust behavior:
+
+```python
+# Time gap between trips (minutes)
+time_gap_minutes = 2  # Default: 2 minutes
+
+# Minimum points required to save a trip
+min_points_per_trip = 3  # Default: 3 points
+
+# Search patterns for log files
+search_patterns = ['pas_debug.log*', '*pas_debug.log*', '*pas_debug_log*']
+
+# Output folder name
+output_folder = 'gps-tracks_pas-debug'
+```
+
+### Natural Sorting
+Uses natural sort algorithm for log files:
+- `pas_debug.log` → `pas_debug.log.1` → `pas_debug.log.2`
+- Not: `pas_debug.log` → `pas_debug.log.2` → `pas_debug.log.1`
+- Handles numeric suffixes correctly
 
 ## Use Cases
 - Automotive forensics analysis
-- Privacy research (understanding what data vehicles collect)
+- Accident reconstruction (trip replay)
 - Travel pattern analysis
-- Identifying frequently visited locations
-- Vehicle usage research
+- Vehicle usage investigation
+- Privacy research (understanding GPS data collection)
 - Blog content for "Behind the Dashboard" series
+- Expert witness testimony preparation
 
-## Troubleshooting
+## Privacy Considerations
 
-### No GPS data found
-- Check that the log file contains `rgc=` entries
-- Verify entries have the correct year (2025)
-- Ensure timestamps are properly formatted
+- ✅ Redact actual GPS coordinates in screenshots
+- ✅ Use generic location names instead of exact addresses
+- ✅ Blur KML visualization maps if publishing
+- ✅ Consider offset coordinates for demonstration purposes
+- ✅ The script output shows real coordinates - sanitize before publishing
 
-### Incorrect clustering
-- Adjust the `radius_meters` parameter in `cluster_locations()` function
-- Default is 100 meters
-- Increase for broader clustering, decrease for finer granularity
-
-### File encoding issues
-- Script uses UTF-8 with error='ignore' for robustness
-- Should handle most log file encoding issues automatically
+## Files Generated
+1. `gps-tracks_pas-debug/` - Output folder (created automatically)
+2. `output_YYYY-MM-DD-HHMMSS.kml` - One file per trip
+3. Console output with statistics and validation info
 
 ## Author
 Created for automotive cybersecurity research and forensic analysis at Fortify Labs.
