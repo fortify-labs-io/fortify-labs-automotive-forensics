@@ -1,6 +1,3 @@
-# fortify-labs-automotive-forensics
-Open-source tools and scripts for automotive forensics and vehicle infotainment system analysis.
-
 # Fortify Labs - Automotive Forensics & Analysis Toolkit
 
 Open-source tools and scripts for automotive forensics and vehicle infotainment system analysis.
@@ -30,8 +27,6 @@ These tools support our mission to provide clarity and confidence in the securit
 - **Incident Reconstruction** - Timeline analysis for accident investigation
 - **Security Auditing** - Connected vehicle vulnerability assessment
 
-## Installation
-
 ### Prerequisites
 - Python 3.8 or higher
 - Git
@@ -41,19 +36,6 @@ These tools support our mission to provide clarity and confidence in the securit
 ```bash
 git clone https://github.com/fortify-labs/automotive-forensics-toolkit.git
 cd automotive-forensics-toolkit
-```
-
-## Quick Start
-
-```bash
-# Extract GPS coordinates from navigation logs
-python ford-sync/gps_extractor.py --input unifiedsearch.log --output gps_data.csv
-
-# Analyze Bluetooth connection history
-python ford-sync/bluetooth_parser.py --input bt_logs/ --output bt_analysis.json
-
-# Generate KML visualization for Google Earth
-python visualization/kml_generator.py --input gps_data.csv --output vehicle_trips.kml
 ```
 
 ## Documentation
@@ -66,8 +48,16 @@ For methodology and research context, see our blog series:
 ```
 automotive-forensics-toolkit/
 ├── ford-sync/                              # Ford SYNC-specific analysis tools
+│   ├── ccl-file-parser.py                  # Telemetry timeline analyzer
+│   ├── ccl-file-parser_README.md           # Timeline analyzer documentation
+│   ├── convert-to-json_ccl-files.py        # JSON formatter utility
+│   ├── convert-to-json_ccl-files_README.md # JSON formatter documentation
+│   ├── extract-GPS_pas-debug-files.py      # GPS data extraction tool
+│   ├── extract_gps_data_README.md          # GPS extraction documentation
+│   ├── parse_gps_tracks.py                 # GPS track parser
+│   ├── parse_gps_tracks_README.md          # GPS track parser documentation
 │   ├── parse_unifiedsearch_log.py          # GPS extraction and clustering tool
-│   ├── parse_unifiedsearch_log_README.md   # Detailed tool documentation
+│   ├── parse_unifiedsearch_log_README.md   # Unified search log documentation
 │   └── README.md                           # Ford SYNC tools overview
 ├── LICENSE
 └── README.md                               # Main repository README
