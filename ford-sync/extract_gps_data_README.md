@@ -20,7 +20,7 @@ This Python script extracts GPS coordinates from Ford SYNC 3 `pas_debug.log` fil
 
 ### Basic Usage
 ```bash
-python3 extract_gps_pas-debug-files.py
+python3 extract-gps_pas-debug-files.py
 ```
 
 ### What It Does
