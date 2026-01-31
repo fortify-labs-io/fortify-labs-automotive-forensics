@@ -54,6 +54,8 @@ automotive-forensics-toolkit/
 │   ├── convert-to-json_ccl-files_README.md # JSON formatter documentation
 │   ├── extract-GPS_pas-debug-files.py      # GPS data extraction tool
 │   ├── extract_gps_data_README.md          # GPS extraction documentation
+│   ├── match_wifi_to_GPS_location.py       # WiFi-to-GPS matching tool
+│   ├── match_wifi_to_GPS_location_README.md # WiFi matching documentation
 │   ├── parse_gps_tracks.py                 # GPS track parser
 │   ├── parse_gps_tracks_README.md          # GPS track parser documentation
 │   ├── parse_unifiedsearch_log.py          # GPS extraction and clustering tool
