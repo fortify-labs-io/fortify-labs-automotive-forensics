@@ -56,7 +56,7 @@ Edit these values in the script to adjust behavior:
 
 ## Author
 
-Created for automotive cybersecurity research and forensic analysis.
+Created for automotive cybersecurity research and forensic analysis at Fortify Labs.
 
 ## License
 
