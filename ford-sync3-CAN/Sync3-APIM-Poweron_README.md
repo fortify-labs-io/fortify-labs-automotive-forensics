@@ -81,7 +81,7 @@ Created for automotive cybersecurity research and reverse engineering analysis b
 
 ## License
 
-This tool is provided for legitimate automotive security research and forensic analysis purposes.
+This procedure is provided for legitimate automotive security research and forensic analysis purposes.
 
 ---
 
