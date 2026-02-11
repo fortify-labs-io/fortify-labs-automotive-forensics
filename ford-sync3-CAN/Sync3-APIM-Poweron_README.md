@@ -6,8 +6,6 @@ For the full blog post including photos and images see - [Fortify Labs Blog](htt
 
 ## Procedure to Power on Unit
 
-Visit our [Fortify Labs Automotive Forensics Github repository - Ford Sync CAN](https://github.com/fortify-labs-io/fortify-labs-automotive-forensics/tree/main/ford-sync3-CAN)
-
 1. Connect Infotainment Unit to Power Supply Pins as follows:
 
    | Function | Pin |
