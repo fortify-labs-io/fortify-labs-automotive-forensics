@@ -87,10 +87,4 @@ This tool is provided for legitimate automotive security research and forensic a
 
 ## Disclaimer
 
-This analysis is based on our professional experience and reflects our best interpretation of the results.
-
-Anyone choosing to replicate these procedures does so at their own risk.
-
-Disassembling a vehicle (or components) and interacting directly with its electronic components carries an inherent risk of damage to the vehicle or its systems. Fortify Labs does not guarantee that any procedure described will be free of risk, nor do we accept responsibility for any resulting damage.
-
-**Disclaimer:** This information is for educational and research purposes only. Working with automotive control systems can affect vehicle safety systems. Only perform these procedures on bench setups, not in vehicles. The author assumes no liability for misuse or damage.
+This information is for educational and research purposes only. Working with automotive control systems can affect vehicle safety systems. Only perform these procedures on bench setups, not in vehicles. The author assumes no liability for misuse or damage.
