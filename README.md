@@ -61,6 +61,10 @@ automotive-forensics-toolkit/
 │   ├── parse_unifiedsearch_log.py          # GPS extraction and clustering tool
 │   ├── parse_unifiedsearch_log_README.md   # Unified search log documentation
 │   └── README.md                           # Ford SYNC tools overview
+├── ford-sync3-CAN/                         # Ford SYNC3 CAN bus analysis tools
+│   ├── Sync3-APIM-Poweron_README.md        # APIM power-on procedure documentation
+│   ├── poweron.log                         # CAN message log for power-on sequence
+│   └── README.md                           # Ford SYNC3 CAN tools overview
 ├── LICENSE
 └── README.md                               # Main repository README
 ```
