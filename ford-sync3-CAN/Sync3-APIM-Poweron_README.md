@@ -2,29 +2,42 @@
 
 Simple guide for powering on Ford SYNC APIM units on the bench for testing and analysis.
 
+For the full blog post including photos and images see - [Fortify Labs Blog](https://www.fortifylabs.io/blog/).
+
 ## Procedure to Power on Unit
 
-Visit our [Fortify Labs Automotive Forensics Github repository - Ford Sync CAN](https://github.com/fortify-labs-io/fortify-labs-automotive-forensics/tree/main/ford-sync3-CAN) 
+Visit our [Fortify Labs Automotive Forensics Github repository - Ford Sync CAN](https://github.com/fortify-labs-io/fortify-labs-automotive-forensics/tree/main/ford-sync3-CAN)
 
 1. Connect Infotainment Unit to Power Supply Pins as follows:
 
-   |Function|Pin|
-   |-|-|
-   |Power|1|
-   |Ground|37|
-   |CAN High|19|
-   |CAN Low|20|
+   | Function | Pin |
+   |----------|-----|
+   | Power    | 1   |
+   | Ground   | 37  |
+   | CAN High | 19  |
+   | CAN Low  | 20  |
 
-   >Note: Ensure power supply is capable of supplying 5 Amps.
+   > Note: Ensure power supply is capable of supplying 5 Amps.
 
-2. Initialize CAN Interface:
+2. Install `can-utils` and initialize the USB2CAN device:
 
    ```bash
-   sudo ip link set can0 type can bitrate 500000
-   sudo ip link set can0 up
+   # Install can-utils
+   sudo apt install can-utils -y
+
+   # The following commands were used to initialize the USB2CAN Device
+   sudo ip link set can0 up type can bitrate 500000
+   sudo ifconfig can0 txqueuelen 100000
+
+   # Monitor CAN traffic in the terminal window
+   candump can0
+
+   # Capture CAN messages to a log file from the can0 interface
+   # This will save the output log file as 'candump-yyyy-mm-dd_hhmmss.log'
+   candump -l can0
    ```
 
-3. Save the following CAN message log to a log file and play it with `canplayer`:
+3. Save the following CAN messages to a log file and play it with `canplayer`:
 
    - CAN messages to be played:
 
@@ -60,12 +73,26 @@ Visit our [Fortify Labs Automotive Forensics Github repository - Ford Sync CAN](
 
 4. The head unit should now be powered on.
 
+---
+
 ## Author
 
-Created for automotive cybersecurity research and reverse engineering analysis.
+Created for automotive cybersecurity research and reverse engineering analysis by Fortify Labs.
+
+---
 
 ## License
 
 This tool is provided for legitimate automotive security research and forensic analysis purposes.
+
+---
+
+## Disclaimer
+
+This analysis is based on our professional experience and reflects our best interpretation of the results.
+
+Anyone choosing to replicate these procedures does so at their own risk.
+
+Disassembling a vehicle (or components) and interacting directly with its electronic components carries an inherent risk of damage to the vehicle or its systems. Fortify Labs does not guarantee that any procedure described will be free of risk, nor do we accept responsibility for any resulting damage.
 
 **Disclaimer:** This information is for educational and research purposes only. Working with automotive control systems can affect vehicle safety systems. Only perform these procedures on bench setups, not in vehicles. The author assumes no liability for misuse or damage.
